@@ -19,7 +19,7 @@ final class VariantTest extends TestCase
 
     public function testWithUpperLowerCaseFirst()
     {
-        $this->assertEquals(['foo', 'Foo', 'bar', 'Bar'], Variants::ofArray(['foo', 'bar'])->withUpperLowerCaseFirst());
+        $this->assertEquals(['foo', 'Foo', 'bar', 'Bar'], Variants::ofArguments('foo', 'bar')->withUpperLowerCaseFirst());
     }
 
     public function testWithUpperLowerCase()
@@ -41,6 +41,22 @@ final class VariantTest extends TestCase
         $this->assertEquals(
             ['callAMethod', 'CallAMethod', 'call_a_method', 'call-a-method'],
             Variants::ofArguments('call a method')->assembled()
+        );
+    }
+
+    public function testDasherized()
+    {
+        $this->assertEquals(
+            ['callAMethod', 'CallAMethod', 'call_a_method', 'call-a-method'],
+            Variants::ofArguments('call-a-method')->assembled()
+        );
+    }
+
+    public function testUnderscore()
+    {
+        $this->assertEquals(
+            ['callAMethod', 'CallAMethod', 'call_a_method', 'call-a-method'],
+            Variants::ofArguments('call_a_method')->assembled()
         );
     }
 }
