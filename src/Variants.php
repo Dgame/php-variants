@@ -34,7 +34,7 @@ class Variants
     }
 
     /**
-     * @param string[] ...$values
+     * @param string ...$values
      *
      * @return Variants
      */
@@ -54,7 +54,7 @@ class Variants
     }
 
     /**
-     * @param callable[] ...$callbacks
+     * @param callable ...$callbacks
      *
      * @return string[]
      */
@@ -113,9 +113,9 @@ class Variants
      * @param string $replacement
      * @param string $value
      *
-     * @return string
+     * @return string|null
      */
-    private static function replace(string $pattern, string $replacement, string $value): string
+    private static function replace(string $pattern, string $replacement, string $value): ?string
     {
         return preg_replace($pattern, $replacement, $value);
     }
@@ -144,6 +144,9 @@ class Variants
         $output = [];
         foreach ($this->values as $value) {
             $value = self::replaceWhitespaces($value);
+            if (empty($value)) {
+                continue;
+            }
 
             $output[] = Inflector::get()->camelize($value, Inflector::DOWNCASE_FIRST_LETTER);
             $output[] = Inflector::get()->camelize($value, Inflector::UPCASE_FIRST_LETTER);
@@ -160,7 +163,12 @@ class Variants
     {
         $output = $this->withCamelSnakeCase();
         foreach ($this->values as $value) {
-            $output[] = Inflector::get()->dasherize(self::replaceWhitespaces($value));
+            $value = self::replaceWhitespaces($value);
+            if (empty($value)) {
+                continue;
+            }
+
+            $output[] = Inflector::get()->dasherize($value);
         }
 
         return $output;
@@ -169,9 +177,9 @@ class Variants
     /**
      * @param string $value
      *
-     * @return string
+     * @return string|null
      */
-    private static function replaceWhitespaces(string $value): string
+    private static function replaceWhitespaces(string $value): ?string
     {
         return preg_replace('/\s+/', '_', trim($value));
     }
